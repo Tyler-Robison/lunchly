@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Reservation {% endblock %}
+
+{% block content %}
+
+<form action="/{{ reservation.id }}/{{ customer.id }}/edit-reservation/" method="POST">
+  <h1>Edit Reservation</h1>
+
+  <div class="form-group">
+      <label for="numGuests">How many Guests?</label>
+      <input id="numGuests"
+             class="form-control"
+             name="numGuests"
+             value="{{ reservation.numGuests}}">
+  </div>
+
+  <div class="form-group">
+      <label for="startAt">Starts At? Currently {{reservation.getformattedStartAt()}}</label>
+        <input id="startAt"
+               class="form-control"
+               name="startAt"
+               placeholder="yyyy-mm-dd hh:mm am/pm">
+  </div>
+
+  <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea id="notes"
+              class="form-control"
+              name="notes">{{ reservation.notes }}</textarea>
+  </div>
+  <button class="btn btn-primary">Edit Reservation</button>
+  <a href="/{{ customer.id }}/" class="btn btn-danger">Cancel</a>
+</form>
+  
+{% endblock %}
+
+<!-- this.numGuests = numGuests;
+this.startAt = startAt;
+this.notes = notes;  -->

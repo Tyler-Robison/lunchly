@@ -14,6 +14,17 @@ class Customer {
     this.notes = notes;
   }
 
+  get notes() {
+    if (this._notes.length < 10) console.log('short notes')
+    return this._notes;
+  }
+
+  // prevents entry of invalid str even if notes set in constructor. 
+  set notes(str) {
+    if (!str) str = ''
+    this._notes = str
+  }
+
   /** find all customers. */
 
   static async all() {
@@ -80,10 +91,38 @@ class Customer {
     }
   }
 
-  fullName(){
+  fullName() {
     const fullName = `${this.firstName} ${this.lastName}`
     return fullName
   }
+
+  static async getIdByName(custName) {
+    const nameArr = custName.split(' ');
+    const firstName = nameArr[0];
+    const lastName = nameArr[1];
+    const result = await db.query(`
+    SELECT id FROM customers
+    WHERE first_name = $1 AND last_name=$2`, [firstName, lastName])
+    
+    if (result.rows.length === 0) {
+      const err = new Error(`Please enter valid first/last name.`);
+      err.status = 404;
+      throw err;
+    }
+
+    return result.rows[0].id
+  }
+
+  static async getBestCustomers() {
+    const result = await db.query(`SELECT customers.id, first_name, last_name, Count(*) AS num_reservations 
+    FROM reservations
+    JOIN customers ON customers.id = reservations.customer_id
+    GROUP BY customer_id, first_name, last_name, customers.id
+    ORDER BY num_reservations desc 
+    LIMIT 10`)
+    return result.rows
+  }
+
 }
 
 module.exports = Customer;

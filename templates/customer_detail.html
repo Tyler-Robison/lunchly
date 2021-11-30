@@ -4,9 +4,7 @@
 {% block content %}
 
 
-<h1>{{ fullName }}</h1>
-<!-- which is better? -->
-<h2>{{ customer.fullName() }}</h2>
+<h1>{{ customer.fullName() }}</h1>
 
 <div class="row">
 
@@ -24,7 +22,7 @@
       <li><b>{{ reservation.getformattedStartAt() }}</b> for {{ reservation.numGuests }}
         <form action="">
         <button class="btn btn-danger" formaction="/{{ reservation.id }}/{{customer.id}}/delete-reservation/" formmethod="POST">Delete Reservation</button>
-        <button class="btn btn-primary" formaction="/{{ reservation.id }}/{{customer.id}}/edit-reservation/" formmethod="POST">Edit Reservation</button>
+        <button class="btn btn-primary" formaction="/{{ reservation.id }}/{{customer.id}}/edit-reservation/" formmethod="GET">Edit Reservation</button>
       </form>
       </li>
       {% endfor %}

@@ -334,3 +334,10 @@ SELECT pg_catalog.setval('public.reservations_id_seq', 200, true);
 
 CREATE INDEX reservations_customer_id_idx ON public.reservations USING btree (customer_id);
 CREATE INDEX reservations_start_at_idx ON public.reservations USING btree (start_at);
+
+-- SELECT first_name, last_name, Count(*) AS num_reservations 
+-- FROM reservations
+-- JOIN customers ON customers.id = reservations.customer_id
+-- GROUP BY customer_id, first_name, last_name
+-- ORDER BY num_reservations desc 
+-- LIMIT 10;

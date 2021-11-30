@@ -37,7 +37,8 @@ router.post("/add/", async function (req, res, next) {
     const phone = req.body.phone;
     const notes = req.body.notes;
 
-    const customer = new Customer({ firstName, lastName, phone, notes });
+    const customer = new Customer({ firstName, lastName, phone, notes});
+    // customer.notes = notes
     await customer.save();
 
     return res.redirect(`/${customer.id}/`);
@@ -51,11 +52,9 @@ router.post("/add/", async function (req, res, next) {
 router.get("/:id/", async function (req, res, next) {
   try {
     const customer = await Customer.getCustomer(req.params.id);
-
     const reservations = await customer.getReservations();
-    const fullName = customer.fullName()
 
-    return res.render("customer_detail.html", { customer, reservations, fullName });
+    return res.render("customer_detail.html", { customer, reservations });
   } catch (err) {
     return next(err);
   }
@@ -122,18 +121,62 @@ router.post('/:resId/:custId/delete-reservation/', async (req, res, next) => {
     await reservation.delete()
     return res.redirect(`/${custId}/`);
   } catch (err) {
-    next(err)
+    return next(err)
+  }
+})
+
+// display form for editing reservation
+router.get('/:resId/:custId/edit-reservation/', async (req, res, next) => {
+  try {
+    const { resId, custId } = req.params;
+    const reservation = await Reservation.getById(resId);
+    const customer = await Customer.getCustomer(custId);
+
+    res.render("reservation_edit_form.html", { reservation, customer });
+  } catch (err) {
+    return next(err)
   }
 })
 
 router.post('/:resId/:custId/edit-reservation/', async (req, res, next) => {
   try {
     const { custId, resId } = req.params
+    const reservation = await Reservation.getById(resId)
 
+    const { numGuests, startAt, notes } = req.body;
+    await reservation.editReservation(numGuests, startAt, notes)
     return res.redirect(`/${custId}/`);
   } catch (err) {
-    next(err)
+    return next(err)
   }
 })
+
+// route for processing first/last entered into search bar.
+router.post('/customer-search', async (req, res, next) => {
+  try {
+    const { custName } = req.body
+    const custId = await Customer.getIdByName(custName)
+    
+    return res.redirect(`/${custId}/`);
+  } catch (err) {
+    return next(err)
+  }
+})
+
+// not working b/c thinks best-customers is an id
+// one above works b/c post so doesn't conflict with /:id
+// gets list of 10 customers with most reservations
+router.get('/customers/best-customers', async (req, res, next) => {
+  try {
+    const bestCustomers = await Customer.getBestCustomers()
+    
+    res.render("best_customers.html", { bestCustomers });
+  } catch(err){
+    return next(err)
+  }
+})
+
+
+
 
 module.exports = router;

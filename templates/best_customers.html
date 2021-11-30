@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ customer.firstName }} {{ customer.lastName }}{% endblock %}
+
+{% block content %}
+
+<h2>Best Customers</h1>
+<ol>
+    {% for customer in bestCustomers %}
+    <li> <a href="/{{customer.id}}">{{ customer.first_name }} {{customer.last_name}} <b> {{customer.num_reservations}}</b></a></li>
+    {% endfor %}
+</ol>
+
+{% endblock %}
